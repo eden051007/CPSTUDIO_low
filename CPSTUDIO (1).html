@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CP STUDIO</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+:root {
+  --bg: #F7F6FA;
+  --surface: #FFFFFF;
+  --surface2: #F0EFF7;
+  --border: #D9D0D1;
+  --border-focus: #3E17D2;
+  --accent: #3E17D2;
+  --accent-mid: #6E6795;
+  --text: #363749;
+  --text-muted: #6E6795;
+  --text-dim: #C1C0D8;
+  --tag-bg: #EAE8F7;
+  --success: #2d9e6b;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 32px;
+  display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { font-size: 17px; font-weight: 800; letter-spacing: 0.08em; color: var(--accent); }
+.logo-dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-left: 2px; vertical-align: middle; }
+.logo-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; font-weight: 500; }
+.screen { width: 100%; }
+
+/* MODE */
+#modeScreen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - 62px); padding: 48px 20px; gap: 44px;
+}
+.mode-eyebrow { font-size: 11px; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; text-transform: uppercase; text-align: center; margin-bottom: 10px; }
+.mode-title h2 { font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 10px; letter-spacing: -0.02em; text-align: center; }
+.mode-title p { font-size: 14px; color: var(--text-muted); line-height: 1.8; text-align: center; }
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 540px; }
+.mode-card {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px;
+  padding: 32px 22px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; text-align: center;
+}
+.mode-card:hover { border-color: var(--accent); box-shadow: 0 4px 24px rgba(62,23,210,0.08); transform: translateY(-3px); }
+.mode-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--tag-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 20px; color: var(--accent); }
+.mode-card.duo .mode-icon { background: #EDE8FD; }
+.mode-card h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; color: var(--text); }
+.mode-card p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.mode-badge { display: inline-block; margin-top: 14px; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: var(--tag-bg); color: var(--accent); }
+
+/* FORM */
+#formScreen { display: none; max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; }
+.back-btn {
+  background: none; border: 1px solid var(--border); color: var(--text-muted);
+  font-family: 'Pretendard', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 8px 16px; border-radius: 8px; cursor: pointer; margin-bottom: 28px;
+  display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent); }
+.section-label { font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.char-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.char-card-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 16px; text-transform: uppercase; }
+.char-card.b .char-card-label { color: var(--accent-mid); }
+label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px; }
+input[type="text"], input[type="password"], textarea {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 11px 14px; color: var(--text); font-family: 'Pretendard', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.15s; margin-bottom: 14px;
+}
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus { border-color: var(--border-focus); background: #fff; }
+input::placeholder, textarea::placeholder { color: var(--text-dim); }
+textarea { min-height: 100px; resize: vertical; line-height: 1.7; }
+.upload-zone {
+  border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 20px 12px;
+  text-align: center; cursor: pointer; transition: all 0.15s; margin-bottom: 14px;
+  position: relative; background: var(--surface2);
+}
+.upload-zone:hover { border-color: var(--accent); background: var(--tag-bg); }
+.upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-zone-text { font-size: 12px; color: var(--text-dim); pointer-events: none; }
+.upload-hint { font-size: 11px; color: var(--accent); margin-top: 4px; pointer-events: none; }
+.preview-img { width: 100%; max-height: 130px; object-fit: cover; border-radius: 6px; display: none; }
+.full-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 14px; }
+.api-bar {
+  background: #FFFBF0; border: 1px solid #F0D8A0; border-radius: var(--radius-sm);
+  padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.api-bar label { margin: 0; font-size: 12px; color: #a07020; white-space: nowrap; font-weight: 600; }
+.api-bar input { margin: 0; flex: 1; min-width: 200px; background: #fff; border-color: #F0D8A0; font-size: 13px; }
+.genre-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+.genre-tag { display: none; }
+.genre-tag + label {
+  display: inline-block; padding: 7px 14px; border: 1px solid var(--border); border-radius: 20px;
+  font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  user-select: none; background: var(--surface2); margin-bottom: 0;
+}
+.genre-tag:checked + label { background: var(--accent); border-color: var(--accent); color: #fff; }
+.generate-btn {
+  width: 100%; padding: 17px; background: var(--accent); border: none; border-radius: var(--radius);
+  color: white; font-family: 'Pretendard', sans-serif; font-size: 15px; font-weight: 700;
+  letter-spacing: 0.03em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(62,23,210,0.22);
+}
+.generate-btn:hover { background: #2e11b0; transform: translateY(-1px); }
+.generate-btn:active { transform: translateY(0); }
+
+/* PROGRESS */
+#progressScreen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - 62px); padding: 40px 20px; gap: 36px;
+}
+.progress-heading { text-align: center; }
+.progress-heading h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.progress-heading p { font-size: 13px; color: var(--text-muted); }
+.loading-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,100% { opacity:0.2; } 50% { opacity:1; } }
+.progress-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 420px; }
+.progress-step {
+  display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); transition: all 0.3s;
+}
+.progress-step.active { border-color: var(--accent); box-shadow: 0 2px 12px rgba(62,23,210,0.1); }
+.progress-step.done { border-color: #b8e0cc; background: #f6fdf9; }
+.step-icon {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; transition: all 0.3s;
+}
+.progress-step.active .step-icon { background: var(--tag-bg); border-color: var(--accent); color: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+.progress-step.done .step-icon { background: #e4f5ec; border-color: #8ecfad; color: var(--success); animation: none; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+.step-label { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+.step-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.progress-step.active .step-label { color: var(--text); }
+.progress-step.done .step-label { color: var(--text-dim); text-decoration: line-through; }
+
+/* RESULT */
+#resultScreen { display: none; max-width: 920px; margin: 0 auto; padding: 36px 20px 80px; }
+.result-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
+.result-title-block h2 { font-size: clamp(20px, 3vw, 28px); font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 6px; }
+.result-title-block p { font-size: 14px; color: var(--text-muted); max-width: 460px; line-height: 1.7; }
+.result-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-sm { padding: 9px 16px; border-radius: 8px; font-family: 'Pretendard', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-outline-sm { background: none; border: 1px solid var(--border); color: var(--text-muted); }
+.btn-outline-sm:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary-sm { background: var(--accent); border: none; color: white; }
+.btn-primary-sm:hover { background: #2e11b0; }
+.result-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.rpanel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.rpanel-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
+.analysis-text { font-size: 14px; line-height: 1.9; color: var(--text-muted); white-space: pre-wrap; }
+.keywords-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.kw-tag { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; background: var(--tag-bg); color: var(--accent); border: 1px solid #c4b8f5; }
+.result-image { width: 100%; border-radius: 10px; display: block; }
+.img-note { font-size: 11px; color: var(--text-dim); margin-top: 8px; font-style: italic; }
+.img-generating { width: 100%; aspect-ratio: 1; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-dim); }
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 10px;
+  padding: 7px 13px; border-radius: 7px; font-size: 12px; font-weight: 600;
+  font-family: 'Pretendard', sans-serif; cursor: pointer; transition: all 0.15s;
+  text-decoration: none;
+}
+.dl-btn-img { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); }
+.dl-btn-img:hover { border-color: var(--accent); color: var(--accent); }
+.dl-btn-playlist { background: var(--accent); color: white; border: none; }
+.dl-btn-playlist:hover { background: #2e11b0; }
+
+/* Arc bar */
+.arc-bar-wrap { margin-bottom: 14px; }
+.arc-bar { display: flex; height: 6px; border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+.arc-seg { flex: 1; }
+.arc-seg.intro { background: #C1C0D8; }
+.arc-seg.build { background: #8B7FD4; }
+.arc-seg.peak  { background: #3E17D2; }
+.arc-seg.fall  { background: #8B7FD4; }
+.arc-seg.end   { background: #C1C0D8; }
+.arc-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.06em; }
+
+/* PLAYLIST */
+.playlist-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.playlist-hint { font-size: 11px; font-weight: 400; color: var(--text-dim); }
+.playlist-wrap { display: flex; flex-direction: column; gap: 8px; }
+
+.track-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s;
+}
+.track-card.open { border-color: var(--accent); }
+.track-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; cursor: pointer; transition: background 0.15s; user-select: none;
+}
+.track-header:hover { background: var(--surface2); }
+.track-num { font-size: 12px; color: var(--text-dim); font-weight: 700; min-width: 22px; flex-shrink: 0; }
+.track-meta { flex: 1; min-width: 0; }
+.track-top-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.track-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.ost-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #EDE8FD; color: var(--accent); }
+.cover-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #FFF0E0; color: #c07020; }
+.arc-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: var(--surface2); color: var(--text-dim); border: 1px solid var(--text-dim); }
+.arc-badge.intro { color: #9B97C8; border-color: #9B97C8; background: #F0EFF7; }
+.arc-badge.build { color: #6B5FBF; border-color: #6B5FBF; background: #ECEAF8; }
+.arc-badge.peak  { color: var(--accent); border-color: var(--accent); background: var(--tag-bg); }
+.arc-badge.fall  { color: #6B5FBF; border-color: #6B5FBF; background: #ECEAF8; }
+.arc-badge.end   { color: #9B97C8; border-color: #9B97C8; background: #F0EFF7; }
+.track-artist { font-size: 12px; color: var(--accent-mid); font-weight: 600; }
+.track-chevron { flex-shrink: 0; font-size: 16px; color: var(--text-dim); transition: transform 0.25s; line-height: 1; }
+.track-card.open .track-chevron { transform: rotate(180deg); }
+
+.track-body { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1); }
+.track-card.open .track-body { max-height: 1600px; }
+.track-body-inner { padding: 16px 20px 20px; border-top: 1px solid var(--border); }
+
+/* Arc image in card */
+.card-arc-img-wrap { width: 100%; margin-bottom: 14px; border-radius: var(--radius-sm); overflow: hidden; }
+.card-arc-img { width: 100%; display: block; border-radius: var(--radius-sm); }
+.card-arc-placeholder {
+  width: 100%; aspect-ratio: 16/9; background: var(--surface2); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-dim);
+  margin-bottom: 14px;
+}
+
+/* Audio bar */
+.audio-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;
+}
+.audio-track-info { flex: 1; min-width: 0; }
+.audio-track-name { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yt-link-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #FF0000; color: white; border: none; border-radius: 6px;
+  padding: 7px 13px; font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: 'Pretendard', sans-serif; text-decoration: none; flex-shrink: 0;
+  transition: background 0.15s;
+}
+.yt-link-btn:hover { background: #cc0000; }
+
+.detail-block { margin-bottom: 12px; }
+.detail-label { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.detail-label.note { color: var(--accent-mid); }
+.detail-text { font-size: 13px; color: var(--text-muted); line-height: 1.9; }
+
+@media (max-width: 640px) {
+  header { padding: 14px 16px; }
+  .mode-cards { grid-template-columns: 1fr; max-width: 320px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .result-layout { grid-template-columns: 1fr; }
+  #formScreen, #resultScreen { padding: 24px 14px 60px; }
+  .result-top { flex-direction: column; }
+  .result-actions { width: 100%; }
+  .result-actions .btn-sm { flex: 1; text-align: center; }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+<header>
+  <span class="logo">CP STUDIO<span class="logo-dot"></span></span>
+  <span class="logo-sub">CHARACTER x PLAYLIST AI</span>
+</header>
+
+<div id="modeScreen" class="screen">
+  <div>
+    <div class="mode-eyebrow">서사를 음악으로</div>
+    <div class="mode-title">
+      <h2>어떤 이야기를 담을까요?</h2>
+      <p>캐릭터의 감정과 관계에 어울리는<br>플레이리스트를 AI가 큐레이션합니다.</p>
+    </div>
+  </div>
+  <div class="mode-cards">
+    <div class="mode-card solo" onclick="selectMode('solo')">
+      <div class="mode-icon">✦</div>
+      <h3>SOLO</h3>
+      <p>한 캐릭터의 내면과<br>서사를 담은 플레이리스트</p>
+      <span class="mode-badge">단일 캐릭터</span>
+    </div>
+    <div class="mode-card duo" onclick="selectMode('duo')">
+      <div class="mode-icon">✦ ✦</div>
+      <h3>CP / DUO</h3>
+      <p>두 캐릭터 사이의 관계와<br>케미를 담은 플레이리스트</p>
+      <span class="mode-badge">두 캐릭터</span>
+    </div>
+  </div>
+</div>
+
+<div id="formScreen" class="screen">
+  <button class="back-btn" onclick="goBack()">← 모드 선택으로</button>
+  <div class="api-bar">
+    <label>🔑 OpenAI API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-proj-...">
+  </div>
+  <div class="section-label">캐릭터 정보</div>
+  <div class="form-grid" id="charGrid"></div>
+  <div class="full-panel">
+    <div class="section-label" id="narrativeLabel">서사 / 관계성</div>
+    <textarea id="relationship" placeholder=""></textarea>
+    <label>세계관 / 배경 / 원작 (선택)</label>
+    <input type="text" id="worldTag" placeholder="예: 귀멸의 칼날, 원신, 현대 판타지...">
+  </div>
+  <div class="full-panel">
+    <div class="section-label">음악 스타일</div>
+    <label>장르 선택 (복수 가능)</label>
+    <div class="genre-grid">
+      <input class="genre-tag" type="checkbox" id="g1"  value="K-pop"><label for="g1">K-pop</label>
+      <input class="genre-tag" type="checkbox" id="g2"  value="J-pop"><label for="g2">J-pop</label>
+      <input class="genre-tag" type="checkbox" id="g3"  value="J-rock"><label for="g3">J-rock</label>
+      <input class="genre-tag" type="checkbox" id="g4"  value="Vocaloid"><label for="g4">Vocaloid</label>
+      <input class="genre-tag" type="checkbox" id="g5"  value="클래식"><label for="g5">클래식</label>
+      <input class="genre-tag" type="checkbox" id="g6"  value="Film Score"><label for="g6">Film Score</label>
+      <input class="genre-tag" type="checkbox" id="g7"  value="Jazz"><label for="g7">Jazz</label>
+      <input class="genre-tag" type="checkbox" id="g8"  value="R&B"><label for="g8">R&B</label>
+      <input class="genre-tag" type="checkbox" id="g9"  value="Hip-hop"><label for="g9">Hip-hop</label>
+      <input class="genre-tag" type="checkbox" id="g10" value="Bossa Nova"><label for="g10">Bossa Nova</label>
+      <input class="genre-tag" type="checkbox" id="g11" value="Dream Pop"><label for="g11">Dream Pop</label>
+      <input class="genre-tag" type="checkbox" id="g12" value="Shoegaze"><label for="g12">Shoegaze</label>
+      <input class="genre-tag" type="checkbox" id="g13" value="Ambient"><label for="g13">Ambient</label>
+      <input class="genre-tag" type="checkbox" id="g14" value="EDM"><label for="g14">EDM</label>
+      <input class="genre-tag" type="checkbox" id="g15" value="Game OST"><label for="g15">Game OST</label>
+      <input class="genre-tag" type="checkbox" id="g16" value="Anime OST"><label for="g16">Anime OST</label>
+      <input class="genre-tag" type="checkbox" id="g17" value="City Pop"><label for="g17">City Pop</label>
+      <input class="genre-tag" type="checkbox" id="g18" value="Alternative Rock"><label for="g18">Alt Rock</label>
+      <input class="genre-tag" type="checkbox" id="g19" value="인디"><label for="g19">인디</label>
+      <input class="genre-tag" type="checkbox" id="g20" value="발라드"><label for="g20">발라드</label>
+    </div>
+    <label>직접 입력 (없는 장르)</label>
+    <input type="text" id="customGenre" placeholder="예: dark cabaret, Midwest emo...">
+    <label>선호 아티스트 / 가수</label>
+    <input type="text" id="artist" placeholder="예: Ado, Sheena Ringo, IU...">
+  </div>
+  <button class="generate-btn" onclick="startGenerate()">플레이리스트 생성하기</button>
+</div>
+
+<div id="progressScreen" class="screen">
+  <div class="progress-heading">
+    <h2>큐레이션 중<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></h2>
+    <p>캐릭터 서사를 분석하고 음악을 선별하고 있어요.</p>
+  </div>
+  <div class="progress-steps" id="progressSteps"></div>
+</div>
+
+<div id="resultScreen" class="screen">
+  <div class="result-top">
+    <div class="result-title-block">
+      <h2 id="resultTitle"></h2>
+      <p id="resultSub"></p>
+    </div>
+    <div class="result-actions">
+      <button class="btn-sm btn-outline-sm" onclick="showFormAgain()">다시 생성</button>
+      <button class="btn-sm btn-primary-sm" onclick="goBack()">처음으로</button>
+    </div>
+  </div>
+  <div class="result-layout">
+    <div class="rpanel">
+      <div class="rpanel-label">서사 분석</div>
+      <div class="analysis-text" id="analysisText"></div>
+      <div class="keywords-row" id="keywordWrap"></div>
+    </div>
+    <div class="rpanel" id="mainImagePanel">
+      <div class="rpanel-label">관계 이미지</div>
+      <div class="img-generating" id="mainImgPlaceholder">이미지 생성 중...</div>
+      <img class="result-image" id="resultImage" alt="" style="display:none;">
+      <div class="img-note" id="imgNote"></div>
+    </div>
+  </div>
+  <div class="rpanel arc-bar-wrap" style="margin-bottom:14px;">
+    <div class="rpanel-label">서사 흐름</div>
+    <div class="arc-bar">
+      <div class="arc-seg intro"></div>
+      <div class="arc-seg build"></div>
+      <div class="arc-seg peak"></div>
+      <div class="arc-seg fall"></div>
+      <div class="arc-seg end"></div>
+    </div>
+    <div class="arc-labels"><span>도입</span><span>전개</span><span>절정</span><span>하강</span><span>마무리</span></div>
+    <div style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-top:10px;" id="arcDesc"></div>
+  </div>
+  <div class="rpanel">
+    <div class="playlist-section-label">
+      추천 플레이리스트
+      <span class="playlist-hint">카드를 클릭하면 서사 이미지와 상세 정보가 펼쳐져요</span>
+    </div>
+    <div class="playlist-wrap" id="playlistWrap"></div>
+  </div>
+
+  <!-- 통합 저장 -->
+  <div class="rpanel" id="savePanelWrap" style="margin-top:14px; display:none;">
+    <div class="rpanel-label">저장하기</div>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.7;">
+      관계 이미지, 서사 구간 이미지, 플레이리스트 텍스트를 ZIP 파일 하나로 저장해요.
+    </p>
+    <button class="generate-btn" style="max-width:320px;" onclick="downloadAll()">
+      ↓ 전체 저장 (ZIP)
+    </button>
+  </div>
+</div>
+
+
+<script>
+// ── 설정 ─────────────────────────────────────────
+var YT_API_KEY = 'AIzaSyAW-0IOOwZJV3_gDSOka6QxPWPkHCzykqM';
+
+var currentMode = 'solo';
+var currentInput = null;
+var ytVideoCache = {};
+var arcImages = { '도입':null, '전개':null, '절정':null, '하강':null, '마무리':null };
+var currentAudioIdx = null;
+var playlistData = [];
+
+var ARC_ORDER = ['도입','전개','절정','하강','마무리'];
+var ARC_KEY   = { '도입':'intro','전개':'build','절정':'peak','하강':'fall','마무리':'end' };
+var ARC_IMAGE_ORDER = ['도입','전개','절정','하강','마무리']; // 5장 전체 생성
+
+var STEPS = {
+  solo: [
+    { label:'원작 OST 후보 검색 중', icon:'🔍' },
+    { label:'캐릭터 서사 분석 중', icon:'◈' },
+    { label:'감정 구조 및 서사 흐름 매핑 중', icon:'◉' },
+    { label:'서사 순서에 맞는 플레이리스트 선별 중', icon:'♪' },
+    { label:'관계 이미지 생성 중', icon:'✦' },
+    { label:'서사 구간 이미지 5장 생성 중', icon:'◈', sub:'도입 / 전개 / 절정 / 하강 / 마무리' }
+  ],
+  duo: [
+    { label:'원작 OST 후보 검색 중', icon:'🔍' },
+    { label:'두 캐릭터 관계 분석 중', icon:'◈' },
+    { label:'감정 케미 및 서사 흐름 매핑 중', icon:'◉' },
+    { label:'관계 기반 플레이리스트 선별 중', icon:'♪' },
+    { label:'관계 이미지 생성 중', icon:'✦' },
+    { label:'서사 구간 이미지 5장 생성 중', icon:'◈', sub:'도입 / 전개 / 절정 / 하강 / 마무리' }
+  ]
+};
+
+// ── 세션 API 키 ────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = sessionStorage.getItem('cp_api_key');
+  if (saved) { var el = document.getElementById('apiKey'); if (el) el.value = saved; }
+});
+
+// ── 네비게이션 ────────────────────────────────────
+function selectMode(mode) {
+  currentMode = mode;
+  document.getElementById('modeScreen').style.display = 'none';
+  document.getElementById('formScreen').style.display = 'block';
+  buildCharFields(mode);
+  var saved = sessionStorage.getItem('cp_api_key');
+  if (saved) { var el = document.getElementById('apiKey'); if (el) el.value = saved; }
+}
+
+function goBack() {
+  stopAudio();
+  ['formScreen','resultScreen','progressScreen'].forEach(function(id) {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('modeScreen').style.display = 'flex';
+}
+
+function showFormAgain() {
+  stopAudio();
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('formScreen').style.display = 'block';
+  buildCharFields(currentMode);
+  var saved = sessionStorage.getItem('cp_api_key');
+  if (saved) { var el = document.getElementById('apiKey'); if (el) el.value = saved; }
+}
+
+function buildCharFields(mode) {
+  var grid = document.getElementById('charGrid');
+  var lbl  = document.getElementById('narrativeLabel');
+  var ta   = document.getElementById('relationship');
+  if (mode === 'solo') {
+    lbl.textContent = '캐릭터 서사';
+    ta.placeholder  = '예: 화려한 무대 위에서 고독한 빌런. 누구에게도 진심을 보이지 않지만 음악 앞에서만은 모든 것을 내려놓는다...';
+    grid.style.gridTemplateColumns = '1fr';
+    grid.innerHTML = charCardHTML('A', false);
+  } else {
+    lbl.textContent = '두 캐릭터의 관계성';
+    ta.placeholder  = '예: 적대적이지만 서로에게 끌리는 관계. 이름을 부르지 않으면서도 항상 서로를 찾게 된다...';
+    grid.style.gridTemplateColumns = '1fr 1fr';
+    grid.innerHTML = charCardHTML('A', false) + charCardHTML('B', true);
+  }
+  ['A','B'].forEach(function(id) {
+    var inp = document.getElementById('image'+id);
+    if (inp) inp.addEventListener('change', function() { previewImage(inp,'preview'+id,'upLabel'+id); });
+  });
+}
+
+function charCardHTML(id, isB) {
+  return '<div class="char-card'+(isB?' b':'')+'"><div class="char-card-label">CHARACTER '+id+'</div>'
+    +'<label>이름</label><input type="text" id="name'+id+'" placeholder="캐릭터 '+id+' 이름">'
+    +'<label>외관 이미지 (선택)</label>'
+    +'<div class="upload-zone"><input type="file" id="image'+id+'" accept="image/*">'
+    +'<img class="preview-img" id="preview'+id+'" alt="">'
+    +'<span class="upload-zone-text" id="upLabel'+id+'">클릭하여 이미지 업로드</span>'
+    +'<span class="upload-hint">이미지를 올리면 해당 그림체로 생성돼요</span>'
+    +'</div></div>';
+}
+
+function previewImage(input, previewId, labelId) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById(previewId);
+    img.src = e.target.result; img.style.display = 'block';
+    document.getElementById(labelId).style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function toBase64(file) {
+  return new Promise(function(res) {
+    var r = new FileReader();
+    r.onload = function() { res(r.result.split(',')[1]); };
+    r.readAsDataURL(file);
+  });
+}
+
+// ── 진행 표시 ─────────────────────────────────────
+function renderProgress(steps, activeIdx) {
+  document.getElementById('progressSteps').innerHTML = steps.map(function(s,i) {
+    var cls  = i < activeIdx ? 'done' : i === activeIdx ? 'active' : '';
+    var icon = i < activeIdx ? '✓' : s.icon;
+    var sub  = s.sub ? '<div class="step-sub">'+s.sub+'</div>' : '';
+    return '<div class="progress-step '+cls+'"><div class="step-icon">'+icon+'</div>'
+      +'<div><div class="step-label">'+s.label+'</div>'+sub+'</div></div>';
+  }).join('');
+}
+
+// ── YouTube 검색 ──────────────────────────────────
+async function fetchYouTubeVideoId(title, artist) {
+  var cacheKey = title + '||' + artist;
+  if (ytVideoCache[cacheKey] !== undefined) return ytVideoCache[cacheKey];
+  try {
+    var q = encodeURIComponent(title + ' ' + artist + ' official');
+    var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q='+q+'&key='+YT_API_KEY;
+    var res = await fetch(url);
+    var data = await res.json();
+    var id = (data.items && data.items[0]) ? data.items[0].id.videoId : null;
+    ytVideoCache[cacheKey] = id;
+    return id;
+  } catch(e) {
+    ytVideoCache[cacheKey] = null;
+    return null;
+  }
+}
+
+// 원작 OST 후보를 YouTube에서 사전 검색
+async function fetchOSTCandidates(worldTag) {
+  if (!worldTag || worldTag.trim() === '') return null;
+  try {
+    // 다양한 쿼리로 검색 (마이너 게임/BL 게임 포함)
+    var queries = [
+      worldTag + ' OST',
+      worldTag + ' soundtrack',
+      worldTag + ' BGM',
+      worldTag + ' 主題歌',       // 일본 게임 주제가
+      worldTag + ' opening',
+      worldTag + ' ending theme'
+    ];
+    var allItems = [];
+    for (var i = 0; i < queries.length; i++) {
+      var q = encodeURIComponent(queries[i]);
+      var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q='+q+'&key='+YT_API_KEY;
+      var res = await fetch(url);
+      var data = await res.json();
+      if (data.items) allItems = allItems.concat(data.items);
+    }
+    // 중복 videoId 제거
+    var seen = {};
+    var candidates = [];
+    allItems.forEach(function(item) {
+      var vid = item.id && item.id.videoId;
+      if (!vid || seen[vid]) return;
+      seen[vid] = true;
+      candidates.push({
+        title: item.snippet.title,
+        channel: item.snippet.channelTitle,
+        videoId: vid
+      });
+    });
+    return candidates.length > 0 ? candidates.slice(0, 20) : null;
+  } catch(e) {
+    console.warn('OST 사전 검색 실패:', e.message);
+    return null;
+  }
+}
+
+// ── 오디오 정리 (이전 재생 잔여 iframe 제거) ──────
+function stopAudio() {
+  if (currentAudioIdx !== null) {
+    var frame = document.getElementById('ytFrame'+currentAudioIdx);
+    if (frame) frame.remove();
+    currentAudioIdx = null;
+  }
+}
+
+async function openYouTube(idx) {
+  var track = playlistData[idx];
+  if (!track) return;
+  var videoId = await fetchYouTubeVideoId(track.title, track.artist);
+  if (videoId) {
+    window.open('https://www.youtube.com/watch?v='+videoId, '_blank');
+  } else {
+    window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(track.title+' '+track.artist), '_blank');
+  }
+}
+
+// ── 아코디언 ──────────────────────────────────────
+function toggleTrack(idx) {
+  var card   = document.getElementById('trackCard'+idx);
+  var isOpen = card.classList.contains('open');
+  document.querySelectorAll('.track-card.open').forEach(function(c) { c.classList.remove('open'); });
+  if (!isOpen) {
+    card.classList.add('open');
+    renderCardArcImage(idx);
+    setTimeout(function() { card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 80);
+  }
+}
+
+function renderCardArcImage(idx) {
+  var slot = document.getElementById('arcSlot'+idx);
+  if (!slot || slot.dataset.loaded) return;
+  slot.dataset.loaded = '1';
+  var arc = slot.dataset.arc;
+  var url = arcImages[arc];
+  if (url) {
+    slot.innerHTML = '<img class="card-arc-img" src="'+url+'" alt="'+arc+' 서사 이미지">';
+  } else {
+    slot.innerHTML = '<span>'+arc+' 이미지 생성에 실패했어요</span>';
+    slot.style.color = 'var(--text-dim)';
+  }
+}
+
+// ── 프롬프트 빌더 ─────────────────────────────────
+function buildTextPrompt(input, ostCandidates) {
+  var isSolo    = input.mode === 'solo';
+  var charSect  = isSolo ? '캐릭터: '+input.nameA : '캐릭터 A: '+input.nameA+'\n캐릭터 B: '+input.nameB;
+  var genreList = (input.genre||[]).concat([input.customGenre]).filter(Boolean).join(', ');
+
+  // YouTube에서 사전 검색된 OST 후보 목록
+  var ostSection = '';
+  if (ostCandidates && ostCandidates.length > 0) {
+    ostSection = '\n## YouTube에서 실존 확인된 원작 OST 목록\n'
+      + '아래는 YouTube에서 직접 검색하여 실존이 확인된 "'+input.worldTag+'" 관련 곡 목록이다.\n'
+      + '**이 목록의 곡들은 실제로 존재하는 곡이므로 반드시 1곡 이상 플레이리스트에 포함하라.**\n'
+      + '제목과 채널명을 참고하여 곡 제목과 아티스트를 특정하고, 서사에 가장 잘 맞는 곡을 골라라.\n\n'
+      + ostCandidates.map(function(c, i) {
+          return (i+1)+'. "'+c.title+'" — 채널: '+c.channel;
+        }).join('\n')
+      + '\n\n';
+  }
+  return (
+    '당신은 캐릭터 서사와 감정을 음악으로 번역하는 전문 음악 큐레이터입니다.\n\n'
+
+    +'## 절대 원칙 (위반 시 결과 무효)\n'
+    +'- 반드시 실존하는 곡만 추천하라. 제목·아티스트 매칭이 100% 확실한 곡만 포함하라.\n'
+    +'- 존재하지 않는 곡, 기억이 모호한 곡, 제목과 아티스트가 불확실한 곡은 절대 추천하지 마라.\n'
+    +'- 가사 직접 인용 금지. 꼭 필요하면 15자 이내만. 없는 가사를 만들어내는 것은 절대 금지.\n'
+    +'- 선택 장르('+( genreList||'자유')+') 안에서만 추천하라. 장르 이탈 금지.\n'
+    +'- 동일 아티스트 2곡 이상 금지.\n'
+    +'- **커버곡(cover)도 추천 가능하다.** 단, 커버곡인 경우 반드시 is_cover: true로 표시하고, reason에 "원곡: [원곡 제목] - [원곡 아티스트]"를 명시하라.\n'
+    +(input.artist
+      ? '- **선호 아티스트('+input.artist+')의 곡을 반드시 1곡 이상 포함하라.** 단, 해당 아티스트의 곡이 선택 장르와 맞지 않거나 실존 여부가 불확실한 경우에만 예외를 허용한다.\n'
+      : ''
+    )
+    +(ostCandidates && ostCandidates.length > 0
+      ? '- **세계관/원작('+input.worldTag+')의 OST 또는 주제가를 반드시 1곡 이상 포함하라.** 아래 YouTube 검색 결과에서 확인된 곡만 포함하라. 목록에 없는 곡은 100% 확실할 때만 추가할 수 있다.\n'
+      : (input.worldTag
+          ? '- 세계관/원작('+input.worldTag+')이 입력됐지만 YouTube에서 관련 OST를 찾지 못했다. 창작 세계관이거나 OST가 없는 경우일 수 있으니, 억지로 OST를 만들어내지 말고 서사에 맞는 일반 곡으로 채워라.\n'
+          : ''
+        )
+    )+'\n'
+
+    +'## 곡 선정 기준 (이 기준으로 매칭하라)\n'
+    +'곡을 선정할 때 다음 항목을 반드시 고려하라:\n'
+    +'① **감정 온도**: 각 서사 단계의 감정 강도(낮음~높음)에 맞는 곡의 에너지와 텐션을 맞춰라.\n'
+    +'② **음악적 질감**: 곡의 악기 구성, 음색(밝음/어두움/거칠음/섬세함), 공간감이 캐릭터의 내면과 맞닿아야 한다.\n'
+    +'③ **곡 구조 활용**: 인트로/벌스/후렴/브리지/아웃트로 중 어느 구간이 서사의 어떤 순간과 포개지는지 구체적으로 짚어라.\n'
+    +'④ **템포와 리듬**: 감정의 호흡 속도와 곡의 BPM/리듬 패턴이 연결되는지 확인하라.\n'
+    +'⑤ **정서적 메시지**: 곡 전체가 담고 있는 정서·주제가 캐릭터의 상황과 공명하는가.\n'
+    +(input.artist
+      ? '⑥ **선호 아티스트 감성 기준**: 선호 아티스트('+input.artist+')의 음악적 감성(사운드 질감, 감정 톤, 장르 성향, 가사 세계관)을 파악하라. 이 감성과 비슷한 결의 곡을 우선 선정하라. 선호 아티스트의 곡을 직접 포함하는 것 외에도, 같은 감성대에 있는 다른 아티스트의 곡도 적극 발굴하라.\n\n'
+      : '\n\n'
+    )
+
+    +'## 다양성 확보 규칙\n'
+    +'- 10곡 전체가 비슷한 분위기에 몰리지 않도록 하라.\n'
+    +'- 빠른 곡과 느린 곡을 섞어라.\n'
+    +'- 가능하면 발매 시대(년도대)를 다양하게 섞어라.\n'
+    +'- 언어(한국어/일본어/영어 등)가 단일하지 않도록 분산하라.\n'
+    +'- 장르 내에서도 하위 장르(예: J-rock 안에서 alt-rock, post-rock, emo 등)를 다양하게 섞어라.\n\n'
+
+    +(ostCandidates && ostCandidates.length > 0
+      ? '## 원작 OST 규칙\n'
+        + '세계관/원작('+input.worldTag+')의 YouTube 검색 결과가 아래에 제공된다.\n'
+        + '- 해당 목록에서 서사에 가장 잘 맞는 곡을 1~3곡 반드시 포함하라.\n'
+        + '- 목록에 없는 OST는 100% 확실할 때만 추가할 수 있다.\n'
+        + '- OST 곡에는 is_ost: true를 표시하라.\n\n'
+      : (input.worldTag
+          ? '## 원작/세계관 참고\n'
+            + '세계관/원작('+input.worldTag+')이 입력됐지만 YouTube에서 관련 OST를 찾지 못했다.\n'
+            + '창작 세계관이거나 OST가 없는 경우이므로 억지로 OST를 포함하지 마라.\n'
+            + '서사 분위기에 맞는 일반 곡으로 채워라.\n\n'
+          : ''
+        )
+    )
+    + ostSection
+
+    +'## 서사 구간별 감정 온도 가이드\n'
+    +'플레이리스트를 다음 감정 곡선으로 배치하라:\n'
+    +'- 도입(1~2번): 낮은 에너지, 조용하고 예감적인 분위기. 아직 갈등이 표면화되지 않은 상태.\n'
+    +'- 전개(3~5번): 감정이 서서히 고조. 긴장감 또는 감정적 유대가 쌓이는 과정.\n'
+    +'- 절정(6~7번): 가장 강렬한 감정. 폭발적이거나 극적인 전환점. 에너지가 최고조.\n'
+    +'- 하강(8~9번): 절정 이후의 여운. 무거움, 피로, 쓸쓸함. 에너지가 낮아지지만 감정은 깊다.\n'
+    +'- 마무리(10번): 가장 조용하거나 가장 초월적인 곡. 결말의 감정을 담는다.\n\n'
+
+    +'[입력 정보]\n'+charSect+'\n'
+    +'세계관/원작: '+(input.worldTag||'미정')+'\n'
+    +'서사/관계성: '+input.relationship+'\n'
+    +'선택 장르: '+(genreList||'자유')+'\n'
+    +'선호 아티스트: '+(input.artist||'없음')+'\n\n'
+
+    +'[Step 1 — 서사 감정 구조 분석]\n'
+    +(isSolo
+      ? '캐릭터의 내면 감정을 분석하라. 감정의 시작 상태, 핵심 전환점, 결말의 감정 상태를 명확히 파악하라. 이 캐릭터가 어떤 감정적 여정을 겪는지 구체적으로 서술하라.'
+      : '두 캐릭터 사이의 감정 흐름을 분석하라. 관계의 시작 상태, 핵심 갈등 또는 유대의 전환점, 관계의 결말을 명확히 파악하라. 두 캐릭터 각자의 감정과 그 비대칭성도 파악하라.'
+    )+'\n\n'
+
+    +'[Step 2 — 음악적 감정 언어로 번역]\n'
+    +'Step 1에서 파악한 감정 구조를 음악적 언어로 번역하라:\n'
+    +'- 도입부에 어울리는 악기·음색·분위기는 무엇인가\n'
+    +'- 절정에서 폭발해야 할 음악적 요소는 무엇인가\n'
+    +'- 전체 플레이리스트의 감정 곡선 설계를 한 단락으로 서술하라\n\n'
+
+    +'[Step 3 — 플레이리스트 선정]\n'
+    +'Step 1~2를 기반으로 실존하는 곡 10곡을 서사 흐름 순서대로 선별하라.\n'
+    +(input.artist ? '선호 아티스트('+input.artist+')의 곡이 반드시 1곡 이상 포함되어 있는지 최종 확인하라.\n' : '')
+    +(ostCandidates && ostCandidates.length > 0 ? '원작('+input.worldTag+') OST 또는 주제가가 반드시 1곡 이상 포함되어 있는지 최종 확인하라. 포함되지 않았다면 반드시 추가하라.\n' : '')
+    +'각 곡마다:\n'
+    +'- reason: 최소 4문장, 200자 이상. 곡의 발매 배경·음악적 특징·구조(인트로/벌스/후렴/브리지/아웃트로)가 캐릭터의 어떤 구체적 순간과 연결되는지 캐릭터 이름을 직접 언급하며 상세히 서술하라.\n'
+    +'- note: 2문장 이상. 곡의 정서나 분위기가 서사의 어떤 감정과 맞닿는지 서술하라. 가사 인용은 15자 이내만.\n\n'
+
+    +'[Step 4 — 감성 키워드 및 요약]\n'
+    +'전체 플레이리스트의 감성 키워드 5~7개와 서사 흐름 한 줄 요약을 추출하라.\n\n'
+
+    +'반드시 아래 JSON만 출력. 마크다운 없이 순수 JSON:\n'
+    +'{"analysis":"Step1~2 기반 감정/관계 분석 200자 내외","arc_summary":"서사 흐름 한 줄 요약","emotional_keywords":["k1","k2","k3","k4","k5"],'
+    +'"playlist":[{"title":"곡 제목","artist":"아티스트명","arc":"도입","reason":"(예시) 2011년 발매된 이 곡은 ~한 구조를 가진다. 인트로의 ~한 기타 리프는 캐릭터A가 ~하는 첫 장면과 포개진다. 후렴의 ~한 멜로디는 두 사람의 ~한 감정적 긴장을 표현한다. 브리지 이후 ~한 전개는 서사 속 ~한 전환점과 정확히 맞닿는다. (최소 4문장, 200자 이상으로 작성)","note":"(예시) 이 곡 전반에 흐르는 ~한 정서는 캐릭터의 ~한 내면과 공명한다. 가사가 담고 있는 ~한 메시지는 이 서사의 ~한 주제와 연결된다. (2문장 이상)","is_ost":false,"is_cover":false}]}'
+  );
+}
+
+function stylePrompt(hasRef) {
+  return hasRef
+    ? 'Faithfully reproduce the exact art style, lineart weight, and color palette of the characters from the reference images, but place them in a NEW, fully illustrated background scene appropriate to the story context — NOT a plain white, transparent, or empty background. The background must be a detailed environment (e.g. room, street, sky, nature, abstract atmosphere) that matches the mood of the scene. 2D illustration. No text, no watermark.'
+    : '2D cel-shaded illustration, clean lineart, flat colors, Japanese animation visual style, cinematic lighting, with a fully illustrated atmospheric background. No text, no watermark.';
+}
+
+// 이미지 프롬프트용 관계성 텍스트 안전 정제
+function safeRelForImage(rel) {
+  return (rel || '')
+    .slice(0, 120)
+    .replace(/성적|섹스|야한|에로|sex|sexual|erotic|nsfw|nude|naked|intimate body/gi, 'emotional')
+    .replace(/키스|키쓰|kiss/gi, 'close emotional moment')
+    .replace(/껴안|포옹|embrace|hug/gi, 'standing close together');
+}
+
+function buildMainImagePrompt(input, hasRef) {
+  var style = stylePrompt(hasRef);
+  var rel   = safeRelForImage(input.relationship);
+  if (input.mode === 'solo') {
+    return style+' Single character: '+input.nameA+'. Scene emotionally conveys: '+rel;
+  }
+  var relL = rel.toLowerCase();
+  var scene;
+  if (/사랑|연인|로맨스|좋아|love|romantic|crush/.test(relL))        scene = 'two characters sharing a tender emotional moment, warm atmosphere';
+  else if (/이별|헤어|작별|parting|farewell|goodbye/.test(relL))    scene = 'one character reaching out as the other walks away, bittersweet parting';
+  else if (/적대|갈등|대립|hostile|rival|enemy|conflict/.test(relL)) scene = 'face-to-face tense confrontation, charged atmosphere';
+  else if (/친구|우정|friend|buddy|companion/.test(relL))            scene = 'side by side warmth and camaraderie';
+  else if (/고독|외로|쓸쓸|lonely|alone|solitude/.test(relL))        scene = 'character alone in dim space, melancholic solitude';
+  else scene = 'two characters close together, complex emotional tension between them';
+  return style+' Two characters: '+input.nameA+' and '+input.nameB+'. Scene: '+scene+'. Context: '+rel;
+}
+
+function buildArcImagePrompt(input, arc, hasRef) {
+  var style = stylePrompt(hasRef);
+  var rel   = safeRelForImage(input.relationship);
+  var chars = input.mode==='solo' ? input.nameA : input.nameA+' and '+input.nameB;
+  var moods = {
+    '도입':'wide establishing shot, both characters seen at a distance within their environment, quiet anticipatory beginning, soft ambient lighting, calm and curious atmosphere, lots of negative space and background visible',
+    '전개':'medium shot from the side, characters positioned at a slight distance from each other, growing connection or deepening tension, warmer tones building, eye-level angle, mid-range framing showing body language',
+    '절정':'extreme close-up or dramatic low-angle shot, intense climactic peak, dramatic high-contrast lighting, tight cropping on faces or hands, powerful confrontational composition, the emotional turning point',
+    '하강':'over-the-shoulder or back view shot, characters seen from behind or in profile, aftermath of climax, bittersweet exhausted mood, quieter heavy atmosphere, distant or turned-away body positioning',
+    '마무리':'high-angle or bird\'s-eye view shot looking down on the characters, final scene, soft warm or cool melancholic tones, sense of ending or new beginning, characters small within a larger space, resolution'
+  };
+  return style+' Characters: '+chars+'. Story context: '+rel+'. Camera composition for this ['+arc+'] scene MUST be distinctly different from other scenes: '+(moods[arc]||'')+'. Vary the camera angle, distance, and character positioning significantly from a standard front-facing medium shot.';
+}
+
+// ── 이미지 생성 ───────────────────────────────────
+// ── 이미지 생성 ───────────────────────────────────
+async function generateImage(apiKey, prompt, fileA, fileB) {
+  var hasRef = !!(fileA || fileB);
+  var resp, data;
+
+  if (hasRef) {
+    // /edits로 그림체 완전 유지
+    var fd = new FormData();
+    fd.append('model', 'gpt-image-2');
+    fd.append('prompt',
+      'Maintain the exact same art style, lineart weight, coloring technique, and shading from the reference image. '
+      + 'The drawing style must be identical — but the pose, expression, composition, and background should reflect the new scene context below.\n\n'
+      + prompt
+    );
+    fd.append('n', '1');
+    fd.append('size', '1024x1024');
+    fd.append('quality', 'low');
+    if (fileA) fd.append('image[]', fileA, 'refA.png');
+    if (fileB) fd.append('image[]', fileB, 'refB.png');
+    resp = await fetch('https://api.openai.com/v1/images/edits', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer '+apiKey },
+      body: fd
+    });
+    data = await resp.json();
+
+    // edits 실패 시 generations 폴백
+    if (data.error) {
+      console.warn('Edits API error, falling back to generations:', data.error.message);
+      resp = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+apiKey },
+        body: JSON.stringify({
+          model: 'gpt-image-2',
+          prompt: '2D cel-shaded illustration, clean lineart, Japanese animation art style. ' + prompt,
+          n: 1,
+          size: '1024x1024',
+          quality: 'low',
+          response_format: 'b64_json'
+        })
+      });
+      data = await resp.json();
+    }
+  } else {
+    // 레퍼런스 없으면 바로 generations
+    resp = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+apiKey },
+      body: JSON.stringify({
+        model: 'gpt-image-2',
+        prompt: '2D cel-shaded illustration, clean lineart, Japanese animation art style. ' + prompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'low',
+        response_format: 'b64_json'
+      })
+    });
+    data = await resp.json();
+  }
+
+  if (data.error) { console.warn('Image API error:', data.error.message); return null; }
+  var item = data.data && data.data[0];
+  if (!item) { console.warn('Image: no data item returned'); return null; }
+  if (item.b64_json) return 'data:image/png;base64,' + item.b64_json;
+  if (item.url) return item.url;
+  return null;
+}
+
+// ── 메인 생성 ─────────────────────────────────────
+async function startGenerate() {
+  var apiKeyEl = document.getElementById('apiKey');
+  var apiKey   = apiKeyEl ? apiKeyEl.value.trim() : '';
+  if (!apiKey) { alert('OpenAI API 키를 입력해주세요.'); return; }
+  sessionStorage.setItem('cp_api_key', apiKey);
+
+  var nameA = (document.getElementById('nameA')||{}).value||'';
+  var nameB = (document.getElementById('nameB')||{}).value||'';
+  nameA = nameA.trim(); nameB = nameB.trim();
+  var relationship = document.getElementById('relationship').value.trim();
+  if (!nameA || !relationship) { alert('이름과 서사/관계성은 필수입니다.'); return; }
+
+  var genres = Array.from(document.querySelectorAll('.genre-tag:checked')).map(function(i){return i.value;});
+  currentInput = {
+    mode: currentMode, nameA: nameA, nameB: nameB, relationship: relationship,
+    genre: genres,
+    customGenre: (document.getElementById('customGenre')||{}).value||'',
+    artist:      (document.getElementById('artist')||{}).value||'',
+    worldTag:    (document.getElementById('worldTag')||{}).value||''
+  };
+
+  var fileA = (document.getElementById('imageA')||{files:[]}).files[0]||null;
+  var fileB = (document.getElementById('imageB')||{files:[]}).files[0]||null;
+  var hasRef = !!(fileA||fileB);
+
+  stopAudio();
+  arcImages = { '도입':null,'전개':null,'절정':null,'하강':null,'마무리':null };
+  ytVideoCache = {};
+  playlistData = [];
+
+  document.getElementById('formScreen').style.display = 'none';
+  document.getElementById('progressScreen').style.display = 'flex';
+  var steps = STEPS[currentMode];
+  renderProgress(steps, 0);
+
+  try {
+    // ① 원작 OST 사전 검색 (YouTube API)
+    var ostCandidates = null;
+    if (currentInput.worldTag && currentInput.worldTag.trim()) {
+      ostCandidates = await fetchOSTCandidates(currentInput.worldTag);
+    }
+    renderProgress(steps, 1);
+
+    // Step 1→3 애니메이션
+    var stepIdx = 1;
+    var timer = setInterval(function() {
+      stepIdx = Math.min(stepIdx+1, 3);
+      renderProgress(steps, stepIdx);
+    }, 2000);
+
+    // 이미지용 base64 변환
+    var b64A = fileA ? await toBase64(fileA) : null;
+    var b64B = fileB ? await toBase64(fileB) : null;
+
+    // vision content 구성
+    var userContent = [];
+    if (b64A) userContent.push({type:'image_url', image_url:{url:'data:image/jpeg;base64,'+b64A}});
+    if (b64B) userContent.push({type:'image_url', image_url:{url:'data:image/jpeg;base64,'+b64B}});
+    userContent.push({type:'text', text: buildTextPrompt(currentInput, ostCandidates)});
+
+    // ② 텍스트 생성
+    var textResp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body: JSON.stringify({
+        model: 'gpt-4o', max_tokens: 7000,
+        messages: [
+          {role:'system', content:'당신은 캐릭터 서사 기반 음악 큐레이터입니다. 반드시 유효한 JSON만 출력하고 마크다운 코드블록이나 설명을 포함하지 마세요.'},
+          {role:'user', content: userContent}
+        ]
+      })
+    });
+
+    clearInterval(timer);
+    renderProgress(steps, 3);
+
+    var textData = await textResp.json();
+    if (textData.error) throw new Error(textData.error.message);
+
+    var raw = (textData.choices[0].message.content || '').replace(/```json|```/g,'').trim();
+    var parsed;
+    try { parsed = JSON.parse(raw); }
+    catch(e) { throw new Error('JSON 파싱 실패:\n'+raw.slice(0,300)); }
+
+    playlistData = parsed.playlist || [];
+
+    // 결과 화면 미리 표시 (이미지 생성 전)
+    renderResult(parsed, null, hasRef);
+
+    // ③④ 관계 이미지 1장 + 서사 구간 이미지 5장(도입/전개/절정/하강/마무리) — 총 6장 병렬 생성
+    renderProgress(steps, 4);
+    try {
+      var imagePromises = [
+        generateImage(apiKey, buildMainImagePrompt(currentInput, hasRef), fileA, fileB)
+      ].concat(ARC_IMAGE_ORDER.map(function(arc) {
+        return generateImage(apiKey, buildArcImagePrompt(currentInput, arc, hasRef), fileA, fileB);
+      }));
+
+      renderProgress(steps, 5);
+
+      var imageResults = await Promise.all(imagePromises);
+
+      // 관계 이미지 반영
+      var mainUrl = imageResults[0];
+      if (mainUrl) {
+        document.getElementById('mainImgPlaceholder').style.display = 'none';
+        var mimg = document.getElementById('resultImage');
+        mimg.src = mainUrl; mimg.style.display = 'block';
+        document.getElementById('imgNote').textContent = hasRef ? '업로드한 캐릭터의 그림체를 반영해 생성했어요.' : '서사 기반으로 생성했어요.';
+      } else {
+        document.getElementById('mainImgPlaceholder').textContent = '이미지 생성에 실패했어요.';
+      }
+
+      // 서사 구간 이미지 5장 반영
+      for (var i = 0; i < ARC_IMAGE_ORDER.length; i++) {
+        arcImages[ARC_IMAGE_ORDER[i]] = imageResults[i + 1];
+      }
+
+      // 이미 열려있는 카드가 있다면 새 이미지로 갱신
+      document.querySelectorAll('.track-card.open').forEach(function(c) {
+        var idx = c.id.replace('trackCard','');
+        var slot = document.getElementById('arcSlot'+idx);
+        if (slot) { slot.dataset.loaded = ''; }
+        renderCardArcImage(idx);
+      });
+
+      // 저장 패널 표시
+      document.getElementById('savePanelWrap').style.display = 'block';
+    } catch(e) {
+      console.warn('이미지 생성 오류:', e.message);
+      document.getElementById('mainImgPlaceholder').textContent = '이미지 생성에 실패했어요.';
+      // 이미지 없어도 저장 패널은 표시 (텍스트라도 저장 가능)
+      document.getElementById('savePanelWrap').style.display = 'block';
+    }
+
+    renderProgress(steps, steps.length);
+    await new Promise(function(r){setTimeout(r,400);});
+
+    document.getElementById('progressScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+
+  } catch(err) {
+    console.error(err);
+    alert('오류가 발생했습니다:\n'+err.message);
+    document.getElementById('progressScreen').style.display = 'none';
+    document.getElementById('formScreen').style.display = 'block';
+    buildCharFields(currentMode);
+  }
+}
+
+// ── 결과 렌더링 ───────────────────────────────────
+function renderResult(parsed, mainImageUrl, hasRef) {
+  var input = currentInput;
+  document.getElementById('resultTitle').textContent = input.mode==='duo'
+    ? input.nameA+' x '+input.nameB : input.nameA;
+  var rel = sanitizeText(input.relationship);
+  document.getElementById('resultSub').textContent = rel.length>70 ? rel.slice(0,70)+'...' : rel;
+  document.getElementById('analysisText').textContent = sanitizeText(parsed.analysis);
+  document.getElementById('keywordWrap').innerHTML = (parsed.emotional_keywords||[])
+    .map(function(k){ return '<span class="kw-tag">'+esc(k)+'</span>'; }).join('');
+  document.getElementById('arcDesc').textContent = sanitizeText(parsed.arc_summary);
+
+  // 관계 이미지 패널은 항상 보임 (생성 중 placeholder 표시)
+  document.getElementById('mainImgPlaceholder').style.display = 'flex';
+  document.getElementById('resultImage').style.display = 'none';
+
+  // 플레이리스트
+  var playlist = parsed.playlist || [];
+  document.getElementById('playlistWrap').innerHTML = playlist.map(function(t, i) {
+    var arcK = ARC_KEY[t.arc] || '';
+    return '<div class="track-card" id="trackCard'+i+'">'
+      +'<div class="track-header" onclick="toggleTrack('+i+')">'
+      +'<div class="track-num">'+String(i+1).padStart(2,'0')+'</div>'
+      +'<div class="track-meta">'
+      +'<div class="track-top-row">'
+      +'<span class="track-title">'+esc(t.title||'')+'</span>'
+      +(t.is_ost ? '<span class="ost-badge">OST</span>' : '')
+      +(t.is_cover ? '<span class="cover-badge">COVER</span>' : '')
+      +(t.arc   ? '<span class="arc-badge '+arcK+'">'+esc(t.arc)+'</span>' : '')
+      +'</div>'
+      +'<div class="track-artist">'+esc(t.artist||'')+'</div>'
+      +'</div>'
+      +'<span class="track-chevron">⌄</span>'
+      +'</div>'
+      // body
+      +'<div class="track-body"><div class="track-body-inner">'
+      // 서사 이미지 슬롯
+      +'<div class="card-arc-placeholder" id="arcSlot'+i+'" data-arc="'+esc(t.arc||'')+'">'+esc(t.arc||'')+'&nbsp;이미지 불러오는 중...</div>'
+      // 트랙 정보 + YouTube 이동
+      +'<div class="audio-bar">'
+      +'<div class="audio-track-info">'
+      +'<div class="audio-track-name">'+esc(t.title||'')+' — '+esc(t.artist||'')+'</div>'
+      +'</div>'
+      +'<button class="yt-link-btn" onclick="openYouTube('+i+')">▶ YouTube</button>'
+      +'</div>'
+      // 추천 이유
+      +'<div class="detail-block">'
+      +'<div class="detail-label">★ 추천 이유</div>'
+      +'<div class="detail-text">'+esc(sanitizeText(t.reason))+'</div>'
+      +'</div>'
+      // 가사 노트
+      +(t.note ? '<div class="detail-block"><div class="detail-label note">♪ 가사 노트</div><div class="detail-text">'+esc(sanitizeText(t.note))+'</div></div>' : '')
+      +'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+// ── 통합 저장 (ZIP) ───────────────────────────────
+async function downloadAll() {
+  var input = currentInput || {};
+  var title = input.mode === 'duo'
+    ? (input.nameA || '') + ' x ' + (input.nameB || '')
+    : (input.nameA || 'CP STUDIO');
+  var safeTitle = title.replace(/[^\w가-힣]/g, '-');
+
+  var btn = document.querySelector('#savePanelWrap .generate-btn');
+  if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
+
+  try {
+    var zip = new JSZip();
+
+    // 플레이리스트 텍스트
+    var lines = [];
+    lines.push('CP STUDIO — ' + title);
+    lines.push('='.repeat(50));
+    lines.push('');
+
+    var analysis = document.getElementById('analysisText').textContent;
+    if (analysis) { lines.push('[서사 분석]'); lines.push(analysis); lines.push(''); }
+
+    var keywords = Array.from(document.querySelectorAll('#keywordWrap .kw-tag')).map(function(el){ return el.textContent; });
+    if (keywords.length) { lines.push('[감성 키워드] ' + keywords.join(' · ')); lines.push(''); }
+
+    var arcDesc = document.getElementById('arcDesc').textContent;
+    if (arcDesc) { lines.push('[서사 흐름] ' + arcDesc); lines.push(''); }
+
+    lines.push('[플레이리스트]');
+    lines.push('-'.repeat(50));
+
+    (playlistData || []).forEach(function(t, i) {
+      var badges = [];
+      if (t.is_ost)   badges.push('OST');
+      if (t.is_cover) badges.push('COVER');
+      var badgeStr = badges.length ? ' [' + badges.join(', ') + ']' : '';
+      lines.push('');
+      lines.push(String(i+1).padStart(2,'0') + '. ' + (t.title||'') + ' — ' + (t.artist||'') + badgeStr);
+      if (t.arc)    lines.push('    서사 구간: ' + t.arc);
+      if (t.reason) lines.push('    ★ 추천 이유: ' + t.reason);
+      if (t.note)   lines.push('    ♪ 가사 노트: ' + t.note);
+    });
+
+    lines.push(''); lines.push('='.repeat(50)); lines.push('Generated by CP STUDIO');
+    zip.file('playlist.txt', lines.join('\n'));
+
+    // 관계 이미지
+    var mainImg = document.getElementById('resultImage');
+    if (mainImg && mainImg.src && mainImg.src.startsWith('data:')) {
+      zip.file('image-main.png', mainImg.src.split(',')[1], { base64: true });
+    }
+
+    // 서사 구간 이미지
+    ['도입','전개','절정','하강','마무리'].forEach(function(arc) {
+      var url = arcImages[arc];
+      if (url && url.startsWith('data:')) {
+        zip.file('image-' + arc + '.png', url.split(',')[1], { base64: true });
+      }
+    });
+
+    var blob = await zip.generateAsync({ type: 'blob' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cp-studio-' + safeTitle + '.zip';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+
+  } catch(e) {
+    alert('저장 중 오류가 발생했어요:\n' + e.message);
+  } finally {
+    if (btn) { btn.textContent = '↓ 전체 저장 (ZIP)'; btn.disabled = false; }
+  }
+}
+
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// 마크다운 이미지 문법(![...](...)) 및 잔여 마크다운 링크 제거
+function sanitizeText(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')   // ![alt](url)
+    .replace(/\[[^\]]*\]\([^)]*\)/g, '')    // [text](url)
+    .trim();
+}
+
+</script>
+</body>
+</html>
